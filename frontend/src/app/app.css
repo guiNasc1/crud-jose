@@ -1,0 +1,42 @@
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.barra {
+  margin-bottom: 1.25rem;
+}
+
+h1 {
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.fraco {
+  color: var(--p-text-muted-color);
+}
+
+.vazio {
+  text-align: center;
+  color: var(--p-text-muted-color);
+  padding: 2.5rem;
+}
+
+.acoes {
+  display: flex;
+  gap: 0.25rem;
+}
+
+/* Campos do dialogo */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.campo label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}

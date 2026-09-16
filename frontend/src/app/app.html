@@ -1,0 +1,136 @@
+<!--
+  Os dois ficam soltos na raiz porque sao "overlays": o <p-toast> e o
+  equivalente do <p:growl> e o <p-confirmdialog> do <p:confirmDialog>.
+  Se nao estiverem no template, os services nao tem onde renderizar -
+  e nao reclamam, simplesmente nada aparece.
+-->
+<p-toast />
+<p-confirmdialog />
+
+<div class="container">
+
+  <p-toolbar styleClass="barra">
+    <ng-template #start>
+      <h1>Cadastro de Produtos</h1>
+    </ng-template>
+
+    <ng-template #end>
+      <p-button label="Novo" icon="pi pi-plus" (onClick)="novo()" />
+    </ng-template>
+  </p-toolbar>
+
+  <!--
+    Atencao: a partir do PrimeNG 20 os templates sao <ng-template #header>.
+    O antigo pTemplate="header" NAO da erro - a tabela apenas renderiza
+    vazia, que e o pior tipo de bug para caçar.
+  -->
+  <p-table
+    [value]="produtos()"
+    [loading]="carregando()"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} produtos"
+    styleClass="p-datatable-striped p-datatable-sm">
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="id" style="width: 6rem">ID <p-sort-icon field="id" /></th>
+        <th pSortableColumn="nome">Nome <p-sort-icon field="nome" /></th>
+        <th pSortableColumn="preco" style="width: 12rem">Preço <p-sort-icon field="preco" /></th>
+        <th style="width: 9rem">Ações</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-produto>
+      <tr>
+        <td class="fraco">{{ produto.id }}</td>
+        <td>{{ produto.nome }}</td>
+        <td>{{ produto.preco | currency:'BRL' }}</td>
+        <td class="acoes">
+          <p-button
+            icon="pi pi-pencil"
+            severity="secondary"
+            [rounded]="true"
+            [text]="true"
+            ariaLabel="Editar"
+            (onClick)="editar(produto)" />
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            [rounded]="true"
+            [text]="true"
+            ariaLabel="Excluir"
+            (onClick)="confirmarExclusao(produto)" />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="4" class="vazio">Nenhum produto cadastrado.</td>
+      </tr>
+    </ng-template>
+
+  </p-table>
+</div>
+
+<!--
+  [(visible)]="dialogVisivel" vai SEM os parenteses: o `visible` do p-dialog
+  e um model() signal e recebe o signal inteiro, nao o valor. E o unico lugar
+  do template onde isso acontece - em [value]="produtos()" voce chama.
+-->
+<p-dialog
+  [(visible)]="dialogVisivel"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '30rem' }"
+  [header]="editandoId() ? 'Editar produto' : 'Novo produto'">
+
+  <div class="campo">
+    <label for="nome">Nome</label>
+    <input
+      pInputText
+      id="nome"
+      fluid
+      autocomplete="off"
+      maxlength="120"
+      placeholder="Ex.: Teclado mecânico"
+      [ngModel]="nome()"
+      (ngModelChange)="nome.set($event)" />
+  </div>
+
+  <div class="campo">
+    <label for="preco">Preço</label>
+    <!--
+      mode="currency" + locale="pt-BR" ja formata R$ 1.234,56 dentro do campo,
+      sem precisar de mascara. O p-inputnumber nao aceita `fluid`, por isso
+      a largura vai em [inputStyle].
+    -->
+    <p-inputnumber
+      inputId="preco"
+      mode="currency"
+      currency="BRL"
+      locale="pt-BR"
+      [min]="0"
+      [inputStyle]="{ width: '100%' }"
+      [ngModel]="preco()"
+      (ngModelChange)="preco.set($event)" />
+  </div>
+
+  <ng-template #footer>
+    <p-button
+      label="Cancelar"
+      icon="pi pi-times"
+      severity="secondary"
+      [text]="true"
+      (onClick)="dialogVisivel.set(false)" />
+    <p-button
+      label="Salvar"
+      icon="pi pi-check"
+      [disabled]="!nome().trim() || !preco()"
+      (onClick)="salvar()" />
+  </ng-template>
+
+</p-dialog>

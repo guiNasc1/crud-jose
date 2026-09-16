@@ -1,0 +1,9 @@
+/* Estilos globais. O visual dos componentes vem do preset Aura,
+   configurado em app.config.ts via providePrimeNG(). */
+
+body {
+  margin: 0;
+  background: var(--p-content-background, #f8f9fa);
+  color: var(--p-text-color);
+  font-family: var(--p-font-family, system-ui, -apple-system, "Segoe UI", sans-serif);
+}
